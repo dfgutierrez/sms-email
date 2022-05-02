@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./Estilos.css";
+import { Dropdown } from "reactstrap";
+import micalro from '../assets/Claro.svg'
+import CryptoJS from 'crypto-js'
+
 
 /* This is a higher order component that
  *  inject a special prop   to our component.
  */
 function withParams(Component) {
   return (props) => (
-    <Component {...props} params={useParams()} navigate={useNavigate()} />
+    <Component {...props} params={useParams()} navigate={useNavigate()} location={useLocation()} />
   );
 }
 
@@ -17,6 +21,12 @@ class Crear extends React.Component {
     super(props);
     this.state = {};
   }
+  componentDidMount(){
+
+
+
+
+  }
   render() {
     return (
 
@@ -24,39 +34,16 @@ class Crear extends React.Component {
           <div className="card mx-auto">
             <div className="card-header bg-transparent">
               <div className="navbar navbar-expand p-0">
-                <ul className="navbar-nav me-auto align-items-center">
-                  <li className="nav-item">
-                    <a href="#!" className="nav-link">
-                      <div
-                        className="position-relative"
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          padding: "2px",
-                        }}
-                      >
-                        <img
-                          src="https://nextbootstrap.netlify.app/assets/images/profiles/1.jpg"
-                          className="img-fluid rounded-circle"
-                          alt=""
-                        />
-                        <span className="position-absolute bottom-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle">
-                          <span className="visually-hidden">New alerts</span>
-                        </span>
-                      </div>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="#!" className="nav-link">
-                      Nelh
-                    </a>
-                  </li>
-                </ul>
+                <select className="form-control" name="" id="">
+                  <option className={"3208654123"}>3208654123</option>
+                  <option className={"3208654123"}>3208654123</option>
+                  <option className={"3208654123"}>3208654123</option>
+                </select>
               </div>
             </div>
             <div
               className="card-body p-4"
-              style={{ height: "500px", overflow: "auto" }}
+              style={{ height: "400px", overflow: "auto" }}
             >
               <div className="d-flex align-items-baseline text-end justify-content-end mb-4">
                 <div className="pe-2">
@@ -71,7 +58,7 @@ class Crear extends React.Component {
                 </div>
                 <div className="position-relative avatar">
                   <img
-                    src="https://nextbootstrap.netlify.app/assets/images/profiles/2.jpg"
+                    src={micalro}
                     className="img-fluid rounded-circle"
                     alt=""
                   />
@@ -107,3 +94,5 @@ class Crear extends React.Component {
 
 //export default Editar;
 export default withParams(Crear);
+
+
