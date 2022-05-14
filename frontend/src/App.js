@@ -1,4 +1,3 @@
-import './App.css';
 import Sms from "./componentes/Sms";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Correo from './componentes/Correo';
@@ -10,7 +9,7 @@ function App() {
       <div >
         <Routes>
            <Route exact path="/sms" element={<Sms/>}/>
-           <Route exact path="/correo/:id" element={<Correo/>}  />
+           <Route exact path="/correo" element={<Correo/>}  />
         </Routes>
       </div>
     </Router>
