@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./Estilos.css";
 import micalro from "../assets/Claro.svg";
 import axios from "axios";
-import { CONST_DATA } from '../domain/constData';
+import { CONST_DATA } from "../domain/constData";
 /* This is a higher order component that
  *  inject a special prop   to our component.
  */
@@ -29,7 +29,7 @@ class Sms extends React.Component {
       infoDecript: {},
       errores: [],
       errorMessage: "",
-      errorBackend: ""
+      errorBackend: "",
     };
   }
   /**
@@ -45,7 +45,7 @@ class Sms extends React.Component {
     this.setState({ state, errores: [] });
   };
 
-  verificarError(elemento) {
+  checkError(elemento) {
     return this.state.errores.indexOf(elemento) !== -1;
   }
   /**
@@ -75,7 +75,7 @@ class Sms extends React.Component {
       tokenUrl = tokenUrl.replace(/\s+/g, "+");
 
       axios
-        .post(CONST_DATA.API+"api/v1/sms/decript", {
+        .post(CONST_DATA.API + "api/v1/sms/decript", {
           token: tokenUrl,
         })
         .then((response) => {
@@ -96,7 +96,7 @@ class Sms extends React.Component {
             });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({
             errorBackend: `Error: ${error.message}`,
           });
@@ -138,19 +138,17 @@ class Sms extends React.Component {
     );
 
     axios
-      .post(CONST_DATA.API+"api/v1/sms/send", dataToSend)
+      .post(CONST_DATA.API + "api/v1/sms/send", dataToSend)
       .then((response) => {
         console.log(response);
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
           errorBackend: `Error: ${error.message}`,
         });
         document.getElementById("alertErrorBackend").style.display = "block";
         console.log(error);
       });
-
-
 
     document.getElementById("cardfooter").style.display = "none";
     document.getElementById("phone").disabled = true;
@@ -184,7 +182,12 @@ class Sms extends React.Component {
     const { phone, message, phones, errorMessage, errorBackend } = this.state;
     return (
       <div className="container mt-4">
-        <div id="alertErrorBackend" className="alert alert-danger" style={{ display: "none" }} role="alert">
+        <div
+          id="alertErrorBackend"
+          className="alert alert-danger"
+          style={{ display: "none" }}
+          role="alert"
+        >
           {errorBackend}
         </div>
         <div className="card mx-auto">
@@ -193,7 +196,7 @@ class Sms extends React.Component {
               <div className="input-group">
                 <select
                   className={
-                    (this.verificarError("error_telefono_vacio")
+                    (this.checkError("error_telefono_vacio")
                       ? "is-invalid"
                       : "") + " form-control"
                   }
@@ -249,7 +252,7 @@ class Sms extends React.Component {
             <div className="input-group">
               <input
                 className={
-                  (this.verificarError("error_mensaje") ? "is-invalid" : "") +
+                  (this.checkError("error_mensaje") ? "is-invalid" : "") +
                   " form-control"
                 }
                 type="text"
