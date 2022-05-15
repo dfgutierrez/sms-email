@@ -1,9 +1,12 @@
 /***
- * @description Objeto de constantes estándar del MS.
+ * @description Objeto de variabres de entornos
  * 
  * @author Fabrica Digital Microservicios
  * @versión 0.0.1-SNAPSHOT
  */
- export const CONST_DATA = {
-    API: 'http://localhost:8080/',
+ export default{
+    API: process.env.API ||'http://localhost:8080/',
   };
+
+
+  

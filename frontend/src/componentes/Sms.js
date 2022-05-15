@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./Estilos.css";
 import micalro from "../assets/Claro.svg";
 import axios from "axios";
-import { CONST_DATA } from "../domain/constData";
+import CONST_DATA from "../domain/constData";
 /* This is a higher order component that
  *  inject a special prop   to our component.
  */
