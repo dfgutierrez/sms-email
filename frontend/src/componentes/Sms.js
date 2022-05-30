@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./Estilos.css";
 import micalro from "../assets/Claro.svg";
 import axios from "axios";
-import CONST_DATA from "../domain/constData";
+
 /* This is a higher order component that
  *  inject a special prop   to our component.
  */
@@ -56,6 +56,7 @@ class Sms extends React.Component {
    *
    */
   componentDidMount() {
+    console.log(process.env.REACT_APP_API)
     this.decriptToken();
     this.curretTime();
   }
@@ -72,10 +73,11 @@ class Sms extends React.Component {
     let tokenUrl = params.get("token");
 
     if (tokenUrl != null && tokenUrl.length != 0) {
-      tokenUrl = tokenUrl.replace(/\s+/g, "+");
+
+      tokenUrl = tokenUrl.replace(/ /g, "+");
 
       axios
-        .post(CONST_DATA.API + "api/v1/sms/decript", {
+        .post(process.env.REACT_APP_API + "api/v1/sms/decript", {
           token: tokenUrl,
         })
         .then((response) => {
@@ -138,7 +140,7 @@ class Sms extends React.Component {
     );
 
     axios
-      .post(CONST_DATA.API + "api/v1/sms/send", dataToSend)
+      .post(process.env.REACT_APP_API + "api/v1/sms/send",  dataToSend)
       .then((response) => {
         console.log(response);
       })
