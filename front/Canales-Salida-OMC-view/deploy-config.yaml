@@ -1,0 +1,213 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: ${NAME}
+  annotations:
+    openshift.io/display-name: ReactJS
+    description: SMS-CORREO
+    tags: instalacion,install,react,deploy,pipeline
+    openshift.io/long-description: Son los botones de SMS y EMAIL - frontend de Mi Claro Asesor
+    openshift.io/provider-display-name: Red Hat, Inc.
+    template.openshift.io/bindable: 'false'
+message: |-
+  Se han creado los siguientes servicios en su proyecto: ${NAME}.
+labels:
+  template: ${NAME}
+  app: ${NAME}
+objects:
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+      annotations:
+        description: Expone y balancea la carga de los pods de aplicacion.
+    spec:
+      ports:
+        - name: #{Template.Port}#-tcp
+          port: #{Template.Port}#
+          protocol: TCP
+          targetPort: #{Template.Port}#
+      loadBalancerIP:
+      type: LoadBalancer
+      selector:
+        name: '${NAME}'
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+    spec:
+      host: #{Template.Name}#-inspira-#{Template.ENVIRONMENT_SERVICE}#.apps.r05oof71.eastus2.aroapp.io 
+      port:
+        targetPort: #{Template.Port}#-tcp
+      to:
+        kind: Service
+        name: '${NAME}'
+        weight: 100
+
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+      annotations:
+        description: Realiza un seguimiento de los cambios en la imagen de la aplicacion.
+
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+      annotations:
+        description: Define como construir la aplicacion.
+        template.alpha.openshift.io/wait-for-ready: 'true'
+    spec:
+      source:
+        type: Binary
+      strategy:
+        dockerStrategy:
+          dockerfilePath: Dockerfile
+          env:
+            - name: 'PORT'
+              value: '#{Template.Port}#'
+      output:
+        to:
+          kind: ImageStreamTag
+          name: '${NAME}:latest'
+      triggers:
+        - imageChange: {}
+          type: ImageChange
+        - type: ConfigChange
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+      annotations:
+        description: Define como desplegar el servidor de aplicaciones.
+        template.alpha.openshift.io/wait-for-ready: 'true'
+    spec:
+      strategy:
+        type: Rolling
+        activeDeadlineSeconds: 21600
+        resources: {}
+        rollingParams:
+          intervalSeconds: 1
+          timeoutSeconds: 300
+          maxSurge: '${MAX_SURGE}'
+          maxUnavailable: '${MAX_UNAVAILABLE}' 
+      triggers:
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}
+            from:
+              kind: ImageStreamTag
+              name: '${NAME}:latest'
+        - type: ConfigChange
+      replicas: '${{MAX_REPLICAS}}'
+      selector:
+        name: '${NAME}'
+      template:
+        metadata:
+          name: '${NAME}'
+          labels:
+            name: '${NAME}'
+        spec:
+          containers:
+            - name: ${NAME}
+              image: ''
+              ports:
+                - containerPort: #{Template.Port}#
+                  protocol: 'TCP'
+              type: 'Recreate'
+              resources:
+                limits:
+                  cpu: '${CPU_LIMIT}'
+                  memory: '${MEMORY_LIMIT}'
+                requests:
+                  cpu: '${CPU_LIMIT}'
+                  memory: '${MEMORY_LIMIT}'
+              env:
+                - name: 'PORT'
+                  value: '#{Template.port}#'
+                - name: 'REACT_APP_API_SMS'
+                  value: '#{Template.REACT_APP_API_SMS}#'
+                - name: 'REACT_APP_API_EMAIL'
+                  value: '#{Template.REACT_APP_API_EMAIL}#'
+                - name: 'REACT_APP_SUBJECT'
+                  value: '#{Template.REACT_APP_SUBJECT}#'
+                
+  - apiVersion: autoscaling/v1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: ${NAME}
+    spec:
+      scaleTargetRef:
+        kind: DeploymentConfig
+        name: ${NAME}
+        apiVersion: apps.openshift.io/v1
+        subresource: scale
+      minReplicas: '${{MIN_REPLICAS}}'
+      maxReplicas: '${{MAX_REPLICAS}}'
+      targetCPUUtilizationPercentage: '${{CPU_TARGET_AVERAGE_UTILIZATION}}'
+
+parameters:
+  - name: NAME
+    displayName: Name
+    description: El nombre asignado a todos los objetos frontend definidos en esta plantilla.
+    required: true
+    value: #{Template.Name}#
+  - name: MEMORY_LIMIT
+    displayName: Memory Limit
+    description: Cantidad maxima de memoria que puede utilizar el contenedor.
+    required: true
+    value: #{Template.MemoryLimit}#
+  - name: CPU_LIMIT
+    displayName: CPU Limit
+    description: Cantidad maxima de procesador que puede utilizar el contenedor.
+    required: true
+    value: #{Template.CpuLimit}#
+  - name: MIN_REPLICAS
+    displayName: Minimo de Pods
+    description: Cantidad minima de pods.
+    required: true
+    value: '#{Template.ReplicasMin}#'
+  - name: MAX_REPLICAS
+    displayName: Maximo de Pods
+    description: Cantidad maxima de pods.
+    required: true
+    value: '#{Template.ReplicasMax}#'
+  - name: CPU_TARGET_AVERAGE_UTILIZATION
+    displayName: Porcentaje de la CPU solicitada
+    description: El porcentaje de la CPU solicitada que cada pod deberia usar idealmente.
+    required: true
+    value: '#{Template.CpuTargetAverageUtilization}#'
+  - name: MAX_SURGE
+    displayName: Max Oleada
+    description: Numero maximo de pods que se pueden programar por encima del Numero original de pods.
+    required: true
+    value: #{Template.MaxSurge}#
+  - name: MAX_UNAVAILABLE
+    displayName: Max Disponibilidad
+    description: Numero maximo de pods que pueden no estar disponibles durante la actualizacion.
+    required: true
+    value: #{Template.MaxUnavailable}#
+  - name: PORT
+    displayName: Puerto de la aplicacion
+    description: Puerto de la aplicacion.
+    required: true
+    value: '#{Template.Port}#'
+  - name: REACT_APP_API_SMS
+    displayName: Url de la api de sms
+    description: Url de la api de sms
+    required: true
+    value: '#{Template.REACT_APP_API_SMS}#'
+  - name: REACT_APP_API_EMAIL
+    displayName: Url de la api de email
+    description: Url de la api de email
+    required: true
+    value: '#{Template.REACT_APP_API_EMAIL}#'
+  - name: REACT_APP_SUBJECT
+    displayName: Asunto que va en el mensaje del correo
+    description: Asunto que va en el mensaje del correo
+    required: true
+    value: '#{Template.REACT_APP_SUBJECT}#'

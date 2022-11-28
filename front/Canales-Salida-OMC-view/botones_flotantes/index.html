@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<link rel="stylesheet" href="estilos.css">
+	<title>sms-email</title>
+</head>
+<body>
+
+	<!-- code for SMS-->
+	<i class="fa fa-solid fa-address-book icono-book " id="icono_book"></i>
+
+	<div class=" activo-comunicacion " id="activo-comunicacion"> 
+		<!-- code for SMS-->
+		<i class="fa fa-sms icono-sms" id="icono_sms" ></i>
+		<div class="tooltip-sms" id="tooltip_sms">
+			<div class="card-header bg-transparent">
+				<div class="navbar navbar-expand p-0">
+					<ul class="navbar-nav ms-auto">
+						<li class="nav-item">
+							<div id="minimizar_sms" class="nav-link">
+								<i class="fas fa-window-minimize"></i>
+							</div>
+						</li>
+						<li class="nav-item">
+							<div id="cerrar_sms" class="nav-link">
+								<i class="fas fa-times"></i>
+							</div>
+						</li>
+					</ul>
+				</div>
+			<iframe src="http://localhost:8083/sms?token=RTix/xzs6didxjSSat0fWhBWZqv/ATE+H0FBoQY5mpiT4UO+FIObhmPHNGWMuQGS9WNzbcmdnVV/XhmFwP9ZmZzqSAluqdHT23k/EYyObLtoRdSkDDfBEb8VDiqb4jY7aaiwgLpEqdyrBIOzjmKx3tgWckMH+gLMcGTmZ9dogdJsZZo5nIsdqO9iNcVhwzJ9qyep+vmVddsMvETwOkAcl6mlQG1uz/XcdYD5PvCSTJiYrSglLNrhuHifDVJUiCbG6Lj5O98lVCAjL+mCNGvDDJgZj5Xlar4X1S7+SnJuNpMb31m7A2Lt8mgS3KtQB/+F0KgMkOFsJ4j5EGLTcTry+Z9Q84rgPJh+P0DCSOMnZdrVbD9S986D/gzKN4cpzd4mXl8TTofGqLSRT0VLxvX4wZSE8Ez/cNabCCEIsj1MTmZ+7Kn2U/UuYz+72rWRLmnLX5DMg/bGFmfKuGT0Sak8BKFK80zCd0QaoPpufq7jKV6a0vJ//mSdcEIsE8ohzjzizEsypZeCD0096SwBQpsbhnmeCvQbgPoEaIxqZI8JMYgTQ9GAHNVJEQceJNFj/ser9/G0WvgG4Ae3Fz4CVezst3Zc1k/oK8+r2ccmHY+cxmHJKRR/jklAjpcZsz3NIYaEnozjghkGxu/yPEXBAkj9JaEUpgDSpX3o+NNj9eNM9DjGNGAGbc6bt4jFecBckadIUU21E2P9iA3rbXTqJkEODUJKv9kfvHF41aumNN8D3IOuiKRenv5198eAtpwl5/hZNpiGpg6kXx90oFYB6tWNDfRPZWGap+Pc89MJB4HXlmKKtCR09zHlLKkOWoxy4Z1ySG/V3poM9/6SCb+FB3M+GXw+cSNdXP9rd6OpYHaxzBs=" height="500" width="400" name="demo" id="ifreme_sms">
+			</iframe>
+			</div>
+		</div>		
+
+		<!-- code for EMAIL-->
+		<i class="fa fa-solid fa-envelope icono-email" id="open_email"></i>
+		<div class="modal-container-email" id="modal_container_email">
+			<div class="modal-email">
+				<div class="navbar navbar-expand p-0">
+					<ul class="navbar-nav ms-auto">
+						<li class="nav-item">
+							<div id="minimizar_email" class="nav-link">
+								<i class="fas fa-window-minimize"></i>
+							</div>
+						</li>
+						<li class="nav-item">
+							<div id="cerrar_email" class="nav-link">
+								<i class="fas fa-times"></i>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<iframe src="http://localhost:8083/correo?token=JI7LdVD73LMbfcv9dxD6ri0IouVkWqLsdYkmQoDegzsw7r14ond3J1577N+YxxCMXUy/gSbWLVqZqCchocLWoJVubef3enoSZlRE9TwQQio4uA5yp5nlYjxI3rpFMEyjxPkalKkGfSKntgcnCnDf/x1r9OvMDBLPGGeDiUfDWai6Xk2Ro7Wwt6On9sP0m03yjgIQrXLtwxNqJhdhwCn8F8tvjjO1gc8PWQKRc4XhrymD/Yd7QYQHqHyPCSJHQLddPEqYQ7FHQeWDshC/OPmWUCoYsx+K9gi9XbvJ6LfW9O6xqxgFU/jxY/jTE+5M687ieEEc+F+5wfrNAnP7J3PHzR2bqSnOObEf+ACP2dF5HQysUXqF6U/KB8UqXZT/ms8FvsKaQQqsdKmLDZtPlMWHKg0jn81VaI3YliBoa9oFP+4hlFG1sUaWVgouGv1aLvPIh2bwbgvHm6EZ1OmPxpOhT/LIZSPV0sCpPl9k6WHUcMxqFNVLGwmzfxAKWa5u2DGD9BKL8Z/GsKvxKd0eBI2QPBbC01yhx49ZIcxN/mFmr1AGugD/z17InhZ9UeFcdfuTB+ISg9wej+oZSelU36127lFNtRNj/YgN62106iZBDg1CSr/ZH7xxeNWrpjTfA9yDroikXp7+dffHgLacJef4WTaYhqYOpF8fdKBWAerVjQ30T2Vhmqfj3PPTCQeB15ZiirQkdPcx5SypDlqMcuGdckhv1d6aDPf+kgm/hQdzPhnoPXfMEOCm8/p5jnWjYJlsb/vRFhevSUpjxpiEo2oiIR2bCjf8bzSmlXzfY2cHJ23PgK9EkRc0WqMvWhNrAdQZUqmatk8/W7vyxMcJeXVwR84wlUBGYIK+0h794by1VsUGugD/z17InhZ9UeFcdfuTr/LTVg6/H9vtV1MMDBcjplbKVLcE7onJ5pARfOKZxzjJy6wka8A1wP4VuONcQJeSTOliEPZFlgjzL+uSP72c1SVYtAN/tb+yVjht2u2rZ7dIIOyJD8R4XCGrhg560UH+O5M7HsJ69hkGr2TaBckE74VrxCVQdTRWfvzIjgXjjM7KcWpkLB3F2p/Ry9QQ3IISChzpeXvXj9sM5UB5Ncf8smJE9H3m9U5Qbw0pHz6tUK/kWoXdgG8blXDDo8U8W09FQbHkC1X7TKDVTuadrmSspffvwVB8J+GV6CvAPYRE6bimHt37MbGe/Pe4QljGsG8G3WPhf+dQNwEQKFB7G6yRpA==" class="iframe-email" name="demo" id="ifreme_email">
+				</iframe>
+			</div>
+		</div>
+	</div>
+	
+<script src="main.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,291 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: ${NAME}
+  annotations:
+    openshift.io/display-name: Java
+    description: sms-services
+    tags: instalacion,install,java,springboot,pipeline,deploy
+    iconClass: icon-spring
+    openshift.io/long-description: Este servicio envia un mensaje de texto al cliente
+    openshift.io/provider-display-name: Red Hat, Inc.
+    template.openshift.io/bindable: 'false'
+message: |-
+  Se han creado los siguientes servicios en su proyecto: ${NAME}.
+labels:
+  template: ${NAME}
+  app: ${NAME}
+objects:
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+      annotations:
+        description: Expone y balancea la carga de los pods de aplicacion.
+    spec:
+      ports:
+        - name: #{Template.Port}#-tcp
+          port: #{Template.Port}#
+          protocol: TCP
+          targetPort: #{Template.Port}#
+      loadBalancerIP:
+      type: LoadBalancer
+      selector:
+        name: '${NAME}'
+  
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+    spec:
+      host: #{Template.Name}#-inspira-#{Template.SPRING_PROFILES_ACTIVE}#.apps.r05oof71.eastus2.aroapp.io 
+      port:
+        targetPort: #{Template.Port}#-tcp
+      to:
+        kind: Service
+        name: '${NAME}'
+        weight: 100
+
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+      annotations:
+        description: Realiza un seguimiento de los cambios en la imagen de la aplicacion.
+
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+      annotations:
+        description: Define como construir la aplicacion.
+        template.alpha.openshift.io/wait-for-ready: 'true'
+    spec:
+      source:
+        type: Binary
+      strategy:
+        dockerStrategy:
+          dockerfilePath: Dockerfile
+          env:
+            - name: 'PORT'
+              value: '#{Template.Port}#'
+      output:
+        to:
+          kind: ImageStreamTag
+          name: '${NAME}:latest'
+      triggers:
+        - imageChange: {}
+          type: ImageChange
+        - type: ConfigChange
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: '${NAME}'
+      annotations:
+        description: Define como desplegar el servidor de aplicaciones.
+        template.alpha.openshift.io/wait-for-ready: 'true'
+    spec:
+      strategy:
+        type: Rolling
+        activeDeadlineSeconds: 21600
+        resources: {}
+        rollingParams:
+          updatePeriodSeconds: 1   
+          intervalSeconds: 1
+          timeoutSeconds: 300
+          maxSurge: '${MAX_SURGE}'
+          maxUnavailable: '${MAX_UNAVAILABLE}' 
+      triggers:
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}
+            from:
+              kind: ImageStreamTag
+              name: '${NAME}:latest'
+        - type: ConfigChange
+      replicas: '${{MAX_REPLICAS}}'
+      selector:
+        name: '${NAME}'
+      template:
+        metadata:
+          name: '${NAME}'
+          labels:
+            name: '${NAME}'
+        spec:
+          containers:
+            - name: ${NAME}
+              image: ''
+              ports:
+                - containerPort: #{Template.Port}#
+                  protocol: 'TCP'
+              type: 'Recreate'
+              resources:
+                limits:
+                  cpu: '${CPU_LIMIT}'
+                  memory: '${MEMORY_LIMIT}'
+                requests:
+                  cpu: '${CPU_LIMIT}'
+                  memory: '${MEMORY_LIMIT}'
+              env:
+                - name: 'MONGODB_URI'
+                  value: '#{Template.MONGODB_URI}#'
+                - name: 'MONGODB_DATABASE'
+                  value: '#{Template.MONGODB_DATABASE}#'
+                - name: 'MONGODB_TYPE_AUTH' 
+                  value: '#{Template.MONGODB_TYPE_AUTH}#'
+                - name: 'PORT'
+                  value: '#{Template.Port}#'
+                - name: 'API_VERSION'
+                  value: '#{Template.ApiVersion}#'
+                - name: 'LOG_LEVEL'
+                  value: '#{Template.LogLevel}#'
+                - name: 'HTTP_TIMEOUT'
+                  value: '#{Template.HttpTimeOut}#'
+                - name: 'CORS_ENABLE'
+                  value: '#{Template.CORS_ENABLE}#'
+                - name: 'SPRING_PROFILES_ACTIVE'
+                  value: '#{Template.SPRING_PROFILES_ACTIVE}#'
+                - name: 'SPRING_PROFILES_ACTIVE'
+                  value: '#{Template.SPRING_PROFILES_ACTIVE}#'
+                - name: 'TZ'
+                  value: '#{Template.TZ}#'
+                - name: 'CLIENTBI_GETOPERATION_DEFAULT_VALUE'
+                  value: '#{Template.CLIENTBI_GETOPERATION_DEFAULT_VALUE}#'
+                - name: 'CLIENTBI_SYSTEM_DEFAULT_VALUE'
+                  value: '#{Template.CLIENTBI_SYSTEM_DEFAULT_VALUE}#'
+                - name: 'CLIENTBI_USER_DEFAULT_VALUE'
+                  value: '#{Template.CLIENTBI_USER_DEFAULT_VALUE}#'
+                - name: 'CLIENTBI_PASSWORD_DEFAULT_VALUE'
+                  value: '#{Template.CLIENTBI_PASSWORD_DEFAULT_VALUE}#'
+                - name: 'CLIENTBI_URL'
+                  value: '#{Template.CLIENTBI_URL}#'
+                - name: 'EMAIL_TOKEN_KEY'
+                  value: '#{Template.EMAIL_TOKEN_KEY}#'
+                - name: 'EMAIL_URI'
+                  value: '#{Template.EMAIL_URI}#'
+                - name: 'HEADER_REQUEST_SYSTEM'
+                  value: '#{Template.HEADER_REQUEST_SYSTEM}#'
+                - name: 'HEADER_REQUEST_TARGET'
+                  value: '#{Template.HEADER_REQUEST_TARGET}#'
+                - name: 'HEADER_REQUEST_USER'
+                  value: '#{Template.HEADER_REQUEST_USER}#'
+                - name: 'HEADER_REQUEST_PASSWORD'
+                  value: '#{Template.HEADER_REQUEST_PASSWORD}#'
+                - name: 'HEADER_REQUEST_IPAPPLICATION'
+                  value: '#{Template.HEADER_REQUEST_IPAPPLICATION}#'
+                - name: 'HEADER_REQUEST_TRACEABILITYID'
+                  value: '#{Template.HEADER_REQUEST_TRACEABILITYID}#'
+                - name: 'MESSAGE_REQUEST_COMMUNICATIONORIGIN'
+                  value: '#{Template.MESSAGE_REQUEST_COMMUNICATIONORIGIN}#'
+                - name: 'MESSAGE_REQUEST_COMMUNICATIONTYPE'
+                  value: '#{Template.MESSAGE_REQUEST_COMMUNICATIONTYPE}#'
+                - name: 'MESSAGE_REQUEST_CONTENTTYPE'
+                  value: '#{Template.MESSAGE_REQUEST_CONTENTTYPE}#'
+                - name: 'MESSAGE_REQUEST_DELIVERYRECEIPTS'
+                  value: '#{Template.MESSAGE_REQUEST_DELIVERYRECEIPTS}#'
+                - name: 'MESSAGE_REQUEST_PUSHTYPE'
+                  value: '#{Template.MESSAGE_REQUEST_PUSHTYPE}#'
+                - name: 'MESSAGE_REQUEST_DELIVERYRECEIPTS'
+                  value: '#{Template.MESSAGE_REQUEST_DELIVERYRECEIPTS}#'
+                - name: 'MESSAGE_REQUEST_TYPECOSTUMER'
+                  value: '#{Template.MESSAGE_REQUEST_TYPECOSTUMER}#'
+                  
+
+  - apiVersion: autoscaling/v1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: ${NAME}
+    spec:
+      scaleTargetRef:
+        kind: DeploymentConfig
+        name: ${NAME}
+        apiVersion: apps.openshift.io/v1
+        subresource: scale
+      minReplicas: '${{MIN_REPLICAS}}'
+      maxReplicas: '${{MAX_REPLICAS}}'
+      targetCPUUtilizationPercentage: '${{CPU_TARGET_AVERAGE_UTILIZATION}}'
+
+parameters:
+  - name: NAME
+    displayName: Name
+    description: El nombre asignado a todos los objetos backend definidos en esta plantilla.
+    required: true
+    value: #{Template.Name}#
+  - name: MEMORY_LIMIT
+    displayName: Memory Limit
+    description: Cantidad maxima de memoria que puede utilizar el contenedor.
+    required: true
+    value: #{Template.MemoryLimit}#
+  - name: CPU_LIMIT
+    displayName: CPU Limit
+    description: Cantidad maxima de procesador que puede utilizar el contenedor.
+    required: true
+    value: #{Template.CpuLimit}#
+  - name: MIN_REPLICAS
+    displayName: Minimo de Pods
+    description: Cantidad minima de pods.
+    required: true
+    value: '#{Template.ReplicasMin}#'
+  - name: MAX_REPLICAS
+    displayName: Maximo de Pods
+    description: Cantidad maxima de pods.
+    required: true
+    value: '#{Template.ReplicasMax}#'
+  - name: CPU_TARGET_AVERAGE_UTILIZATION
+    displayName: Porcentaje de la CPU solicitada
+    description: El porcentaje de la CPU solicitada que cada pod deberia usar idealmente.
+    required: true
+    value: '#{Template.CpuTargetAverageUtilization}#'
+  - name: MAX_SURGE
+    displayName: Max Oleada
+    description: Numero maximo de pods que se pueden programar por encima del Numero original de pods.
+    required: true
+    value: #{Template.MaxSurge}#
+  - name: MAX_UNAVAILABLE
+    displayName: Max Disponibilidad
+    description: Numero maximo de pods que pueden no estar disponibles durante la actualizacion.
+    required: true
+    value: #{Template.MaxUnavailable}#
+  - name: PORT
+    displayName: Puerto de la aplicacion
+    description: Puerto de la aplicacion.
+    required: true
+    value: '#{Template.Port}#'
+  - name: API_VERSION
+    displayName: Version de la api 
+    description: Version de la api.
+    required: true
+    value: '#{Template.ApiVersion}#'
+  - name: LOG_LEVEL
+    displayName: Nivel de logs 
+    description: Nivel de logs de la api.
+    required: true
+    value: #{Template.LogLevel}#
+  - name: HTTP_TIMEOUT
+    displayName: Http timeout
+    description: Http timeout.
+    required: true
+    value: '#{Template.HttpTimeOut}#'
+  - name: CORS_ENABLE
+    displayName: Cors enable
+    description: Cors enable.
+    required: true
+    value: '#{Template.CORS_ENABLE}#'
+  - name: SPRING_PROFILES_ACTIVE
+    displayName: Profile spring
+    description: Variables de configuracion de spring.
+    required: true
+    value: '#{Template.SPRING_PROFILES_ACTIVE}#'
+  - name: SPRING_PROFILES_ACTIVE
+    displayName: Spring profile active
+    description: Spring profile active.
+    required: false
+    value: '#{Template.SPRING_PROFILES_ACTIVE}#'
+  - name: TZ
+    displayName: Spring profile active
+    description: Spring profile active.
+    required: true
+    value: '#{Template.TZ}#'

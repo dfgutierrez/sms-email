@@ -1,0 +1,50 @@
+{
+  "name": "canalessalidaomcview",
+  "homepage": ".",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@compodoc/compodoc": "^1.1.19",
+    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.0.1",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^0.27.2",
+    "bootstrap": "^5.1.3",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1",
+    "reactstrap": "^9.0.2",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "compodoc": "npx compodoc -p tsconfig.doc.json ",
+    "start": "node node_modules/react-scripts/scripts/start.js",
+    "build": "node node_modules/react-scripts/scripts/build.js",
+    "test": "node node_modules/react-scripts/scripts/test.js",
+    "eject": "node node_modules/react-scripts/scripts/eject.js",
+    "sonar:dev": "sonar-scanner -Dsonar.host.url=http://localhost:9000/ -Dsonar.login=6db1310e5db7697dc00564f9419c4feb91d3ca85"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "sonar-scanner": "^3.1.0"
+  }
+}
